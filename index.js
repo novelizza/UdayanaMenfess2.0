@@ -81,7 +81,7 @@ async function onComplete() {
 }
 
 app.get("/", (req, res, next) => {
-  res.send("Welcome to twitter bot server!");
+  res.send("Welcome to Udayana bot server!");
 });
 
 app.get("/trigger", async (req, res, next) => {
