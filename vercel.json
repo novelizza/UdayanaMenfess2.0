@@ -1,3 +1,4 @@
 {
+  "builds": [{ "source": "./index.js", "use": "@vercel/node" }],
   "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
