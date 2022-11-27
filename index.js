@@ -83,7 +83,7 @@ async function onComplete() {
   console.log("my job is done!");
 }
 
-app.get("/api", (req, res, next) => {
+app.get("/", (req, res, next) => {
   res.send("Welcome to Udayana bot server!");
 });
 
