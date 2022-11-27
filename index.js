@@ -4,8 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const CronJob = require("cron").CronJob;
 
-const Test = require("./api/text");
-
 const { TwitterBot } = require("./twitter-bot");
 
 const app = express();
@@ -14,7 +12,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/product", Test);
 
 const bot = new TwitterBot({
   consumer_key: process.env.CONSUMER_KEY,
