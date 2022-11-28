@@ -23,7 +23,6 @@ class TwitterBot {
         })
         .catch((err) => {
           console.log("error on get admin <<<<<<<<<<<<<<");
-
           reject(err);
         });
     });
@@ -80,6 +79,7 @@ class TwitterBot {
 
             await this.deleteUnnecessaryMessages(unnecessaryMessages);
             await this.deleteMoreThan280CharMsgs(triggerMessages);
+            // await this.deleteIncludeForbiddenWord(triggerMessages);
             // if (triggerMessages[0]) {
             //   lastMessage = triggerMessages[triggerMessages.length - 1];
             // }
@@ -176,23 +176,64 @@ class TwitterBot {
     });
   };
 
+  sendDM = (sender) => {
+    // URL Link for twitter endpoint
+    const urlLink =
+      "https://api.twitter.com/1.1/direct_messages/events/new.json";
+
+    // Generating timestamp
+    const ts = Math.floor(new Date().getTime() / 1000);
+    const timestamp = ts.toString();
+
+    // Authorization Parameters
+    const params = {
+      oauth_version: "1.0",
+      oauth_consumer_key: process.env.CONSUMER_KEY,
+      oauth_token: process.env.ACCESS_TOKEN,
+      oauth_timestamp: timestamp,
+      oauth_nonce: "ZTBrVlg0Z0tGR3g3eVlQWnFxSWk6MTpjaQ",
+      oauth_signature_method: "HMAC-SHA1",
+      oauth_signature: "F86h_mhpso4at8lcgw527BLMeU1EapTWm-28tZTVv8__yE4zB5",
+    };
+
+    const dataString = `{"event": {"type": "message_create", "message_create": {"target": { "recipient_id": "${recipientID}"},"message_data": {"text": "${text}"}}}}`;
+
+    const options = {
+      url: urlLink,
+      headers: {
+        Authorization: `OAuth oauth_consumer_key="${params.oauth_consumer_key}", oauth_nonce= ${params.oauth_nonce}, oauth_signature= ${params.oauth_signature}, oauth_signature_method="HMAC-SHA1", oauth_timestamp=${params.oauth_timestamp},oauth_token="${params.oauth_token}", oauth_version=${params.oauth_version}`,
+        "Content-type": "application/json",
+      },
+      body: dataString,
+    };
+
+    request.post(options, (error, response, body) => {
+      console.log(response.statusCode);
+    });
+  };
+
   deleteUnnecessaryMessages = async (unnecessaryMessages) => {
-    if (unnecessaryMessages.length > 3) {
-      for (let i = 0; i < 3; i++) {
-        await this.deleteMessage(unnecessaryMessages[i]);
-        await this.sleep(2000);
-      }
-    } else {
-      for (const msg of unnecessaryMessages) {
-        await this.deleteMessage(msg);
-        await this.sleep(2000);
-      }
+    // if (unnecessaryMessages.length > 3) {
+    //   for (let i = 0; i < 3; i++) {
+    //     await this.deleteMessage(unnecessaryMessages[i]);
+    //     await this.sleep(2000);
+    //   }
+    // } else {
+    //   for (const msg of unnecessaryMessages) {
+    //     await this.deleteMessage(msg);
+    //     await this.sleep(2000);
+    //   }
+    // }
+    for (let i = 0; i < unnecessaryMessages.length; i++) {
+      await this.deleteMessage(unnecessaryMessages[i]);
+      await this.sleep(2000);
     }
   };
 
   deleteMoreThan280CharMsgs = async (triggerMessages) => {
     try {
       let moreThan280 = [];
+
       for (const [i, msg] of triggerMessages.entries()) {
         let text = msg.message_create.message_data.text;
         const attachment = msg.message_create.message_data.attachment;
@@ -201,6 +242,7 @@ class TwitterBot {
           text = text.split(shortUrl)[0];
         }
         if (text.length > 280) {
+          console.log("DM more than 280 char so ...");
           moreThan280.push(msg);
           await this.deleteMessage(msg);
           await this.sleep(2000);
@@ -216,6 +258,28 @@ class TwitterBot {
     } catch (error) {
       throw error;
     }
+  };
+
+  deleteIncludeForbiddenWord = async (triggerMessages) => {
+    const ForbiddenWord = ["BNI", "BCA", "BRI"];
+
+    await triggerMessages.map(async (msg) => {
+      let text = msg.message_create.message_data.text;
+      const attachment = msg.message_create.message_data.attachment;
+      if (attachment) {
+        const shortUrl = attachment.media.url;
+        text = text.split(shortUrl)[0];
+      }
+      if (
+        ForbiddenWord.map((word) => {
+          text.includes(word);
+        }).length > 0
+      ) {
+        await this.deleteMessage(msg);
+        console.log("DM include forbidden word so ...");
+        await this.sleep(2000);
+      }
+    });
   };
 
   deleteMessage = (message) => {

@@ -21,7 +21,7 @@ const bot = new TwitterBot({
   triggerWord: process.env.TRIGGER,
 });
 
-const job = new CronJob("0 */5 * * * *", doJob, onComplete, true);
+const job = new CronJob("0 */3 * * * *", doJob, onComplete, true);
 
 async function doJob() {
   console.log(`execute @ ${new Date().toTimeString()}`);
@@ -34,31 +34,28 @@ async function doJob() {
         .slice(0)
         .reverse()
         .map(async (pesan) => {
-          if (pesan.id) {
-            tempMessage.push(pesan);
-            if (
-              tempMessage.map((sender) => {
-                tempMessage.filter(
-                  (dataPesan) =>
-                    dataPesan.message_create.sender_id ===
-                    sender.message_create.sender_id
-                );
-              }).length === 1
-            ) {
-              const { data } = await bot.tweetMessage(pesan);
-              await bot.deleteMessage(pesan);
-              console.log(
-                `... DM has been successfuly reposted with id: ${data.id} @ ${data.created_at}`
+          tempMessage.push(pesan);
+          if (
+            tempMessage.map((sender) => {
+              tempMessage.filter(
+                (dataPesan) =>
+                  dataPesan.message_create.sender_id ===
+                  sender.message_create.sender_id
               );
-              console.log("------------------------------------");
-            } else {
-              console.log(
-                "Sender send message more than one times, DM will delete"
-              );
-              await bot.deleteMessage(pesan);
-              console.log("------------------------------------");
-            }
+            }).length === 1
+          ) {
+            const { data } = await bot.tweetMessage(pesan);
+            await bot.deleteMessage(pesan);
+            console.log(
+              `... DM has been successfuly reposted with id: ${data.id} @ ${data.created_at}`
+            );
+            console.log("------------------------------------");
           } else {
+            console.log(
+              "Sender send message more than one times, DM will delete"
+            );
+            await bot.deleteMessage(pesan);
+            console.log("------------------------------------");
           }
         });
     } else {
