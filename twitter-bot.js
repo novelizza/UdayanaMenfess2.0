@@ -264,9 +264,12 @@ class TwitterBot {
           text.includes(word);
         }).length > 0
       ) {
+        ForbiddenWord.map((word) => {
+          text.includes(word);
+        });
         ForbiddenMessage.push(msg);
-        console.log("DM include forbidden word so it'll delete...");
-        await this.deleteMessage(msg);
+        // console.log("DM include forbidden word so it'll delete...");
+        // await this.deleteMessage(msg);
         await this.sleep(2000);
       }
     });
