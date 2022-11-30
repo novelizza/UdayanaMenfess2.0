@@ -231,10 +231,9 @@ class TwitterBot {
   };
 
   deleteMoreThan280CharMsgs = async (triggerMessages) => {
-    try {
       let moreThan280 = [];
 
-      for (const [i, msg] of triggerMessages.entries()) {
+      await triggerMessages.map(async (msg) => {
         let text = msg.message_create.message_data.text;
         const attachment = msg.message_create.message_data.attachment;
         if (attachment) {
@@ -247,18 +246,11 @@ class TwitterBot {
           await this.deleteMessage(msg);
           await this.sleep(2000);
         }
-        if (i + 1 === 3) {
-          break;
+        for (const msg of moreThan280) {
+          const idx = triggerMessages.indexOf(msg);
+          triggerMessages.splice(idx, 1);
         }
-      }
-      for (const msg of moreThan280) {
-        const idx = triggerMessages.indexOf(msg);
-        triggerMessages.splice(idx, 1);
-      }
-    } catch (error) {
-      throw error;
-    }
-  };
+    });
 
   deleteDMIncludeForbiddenWord = async (triggerMessages) => {
     const ForbiddenWord = ["BNI", "BCA", "BRI"];
