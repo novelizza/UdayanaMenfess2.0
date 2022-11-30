@@ -231,26 +231,27 @@ class TwitterBot {
   };
 
   deleteMoreThan280CharMsgs = async (triggerMessages) => {
-      let moreThan280 = [];
+    let moreThan280 = [];
 
-      await triggerMessages.map(async (msg) => {
-        let text = msg.message_create.message_data.text;
-        const attachment = msg.message_create.message_data.attachment;
-        if (attachment) {
-          const shortUrl = attachment.media.url;
-          text = text.split(shortUrl)[0];
-        }
-        if (text.length > 280) {
-          console.log("DM more than 280 char so it'll delete...");
-          moreThan280.push(msg);
-          await this.deleteMessage(msg);
-          await this.sleep(2000);
-        }
-        for (const msg of moreThan280) {
-          const idx = triggerMessages.indexOf(msg);
-          triggerMessages.splice(idx, 1);
-        }
+    await triggerMessages.map(async (msg) => {
+      let text = msg.message_create.message_data.text;
+      const attachment = msg.message_create.message_data.attachment;
+      if (attachment) {
+        const shortUrl = attachment.media.url;
+        text = text.split(shortUrl)[0];
+      }
+      if (text.length > 280) {
+        console.log("DM more than 280 char so it'll delete...");
+        moreThan280.push(msg);
+        await this.deleteMessage(msg);
+        await this.sleep(2000);
+      }
     });
+    for (const msg of moreThan280) {
+      const idx = triggerMessages.indexOf(msg);
+      triggerMessages.splice(idx, 1);
+    }
+  };
 
   deleteDMIncludeForbiddenWord = async (triggerMessages) => {
     const ForbiddenWord = ["BNI", "BCA", "BRI"];
