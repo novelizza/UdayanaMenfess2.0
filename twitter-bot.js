@@ -79,7 +79,7 @@ class TwitterBot {
 
             await this.deleteUnnecessaryMessages(unnecessaryMessages);
             await this.deleteMoreThan280CharMsgs(triggerMessages);
-            // await this.deleteIncludeForbiddenWord(triggerMessages);
+            await this.deleteDMIncludeForbiddenWord(triggerMessages);
             // if (triggerMessages[0]) {
             //   lastMessage = triggerMessages[triggerMessages.length - 1];
             // }
@@ -196,7 +196,7 @@ class TwitterBot {
       oauth_signature: "F86h_mhpso4at8lcgw527BLMeU1EapTWm-28tZTVv8__yE4zB5",
     };
 
-    const dataString = `{"event": {"type": "message_create", "message_create": {"target": { "recipient_id": "${recipientID}"},"message_data": {"text": "${text}"}}}}`;
+    const dataString = `{"event": {"type": "message_create", "message_create": {"target": { "recipient_id": "${sender}"},"message_data": {"text": "Pesan Terkirim ya!"}}}}`;
 
     const options = {
       url: urlLink,
@@ -242,7 +242,7 @@ class TwitterBot {
           text = text.split(shortUrl)[0];
         }
         if (text.length > 280) {
-          console.log("DM more than 280 char so ...");
+          console.log("DM more than 280 char so it'll delete...");
           moreThan280.push(msg);
           await this.deleteMessage(msg);
           await this.sleep(2000);
@@ -260,26 +260,27 @@ class TwitterBot {
     }
   };
 
-  deleteIncludeForbiddenWord = async (triggerMessages) => {
+  deleteDMIncludeForbiddenWord = async (triggerMessages) => {
     const ForbiddenWord = ["BNI", "BCA", "BRI"];
+    const ForbiddenMessage = [];
 
     await triggerMessages.map(async (msg) => {
       let text = msg.message_create.message_data.text;
-      const attachment = msg.message_create.message_data.attachment;
-      if (attachment) {
-        const shortUrl = attachment.media.url;
-        text = text.split(shortUrl)[0];
-      }
       if (
         ForbiddenWord.map((word) => {
           text.includes(word);
         }).length > 0
       ) {
+        ForbiddenMessage.push(msg);
+        console.log("DM include forbidden word so it'll delete...");
         await this.deleteMessage(msg);
-        console.log("DM include forbidden word so ...");
         await this.sleep(2000);
       }
     });
+    for (const msg of ForbiddenMessage) {
+      const idx = triggerMessages.indexOf(msg);
+      triggerMessages.splice(idx, 1);
+    }
   };
 
   deleteMessage = (message) => {

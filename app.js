@@ -52,7 +52,7 @@ async function doJob() {
             console.log("------------------------------------");
           } else {
             console.log(
-              "Sender send message more than one times, DM will delete"
+              `Sender send message more than one times, DM with id: ${pesan.id} will delete`
             );
             await bot.deleteMessage(pesan);
             console.log("------------------------------------");
