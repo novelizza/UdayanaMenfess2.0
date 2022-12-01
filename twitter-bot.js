@@ -254,23 +254,13 @@ class TwitterBot {
   };
 
   deleteDMIncludeForbiddenWord = async (triggerMessages) => {
-    const ForbiddenWord = ["BNI", "BCA", "BRI"];
+    const ForbiddenWord = ["BNI", "BCA", "BRI", "MANDIRI", "BSI"];
     const ForbiddenMessage = [];
 
     await triggerMessages.map(async (msg) => {
       let text = msg.message_create.message_data.text;
-      // if (
-      //   ForbiddenWord.map((word) => {
-      //     text.includes(word);
-      //   }).length > 0
-      // ) {
-      //   ForbiddenMessage.push(msg);
-      //   // console.log("DM include forbidden word so it'll delete...");
-      //   // await this.deleteMessage(msg);
-      //   await this.sleep(2000);
-      // }
       ForbiddenWord.map(async (word) => {
-        if (text.includes(word)) {
+        if (text.toUpperCase().includes(word)) {
           ForbiddenMessage.push(msg);
           console.log("DM include forbidden word so it'll delete...");
           await this.deleteMessage(msg);
