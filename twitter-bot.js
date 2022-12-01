@@ -269,12 +269,12 @@ class TwitterBot {
       //   // await this.deleteMessage(msg);
       //   await this.sleep(2000);
       // }
-      ForbiddenWord.map((word) => {
+      ForbiddenWord.map(async (word) => {
         if (text.includes(word)) {
-            ForbiddenMessage.push(msg);
-            console.log("DM include forbidden word so it'll delete...");
-            await this.deleteMessage(msg);
-            await this.sleep(2000);
+          ForbiddenMessage.push(msg);
+          console.log("DM include forbidden word so it'll delete...");
+          await this.deleteMessage(msg);
+          await this.sleep(2000);
         }
       });
     });
