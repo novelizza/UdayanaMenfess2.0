@@ -79,7 +79,7 @@ class TwitterBot {
 
             await this.deleteUnnecessaryMessages(unnecessaryMessages);
             await this.deleteMoreThan280CharMsgs(triggerMessages);
-            // await this.deleteDMIncludeForbiddenWord(triggerMessages);
+            await this.deleteDMIncludeForbiddenWord(triggerMessages);
             // if (triggerMessages[0]) {
             //   lastMessage = triggerMessages[triggerMessages.length - 1];
             // }
@@ -259,21 +259,24 @@ class TwitterBot {
 
     await triggerMessages.map(async (msg) => {
       let text = msg.message_create.message_data.text;
-      if (
-        ForbiddenWord.map((word) => {
-          text.includes(word);
-        }).length > 0
-      ) {
-        console.log(
-          ForbiddenWord.map((word) => {
-            text.includes(word);
-          })
-        );
-        ForbiddenMessage.push(msg);
-        // console.log("DM include forbidden word so it'll delete...");
-        // await this.deleteMessage(msg);
-        await this.sleep(2000);
-      }
+      // if (
+      //   ForbiddenWord.map((word) => {
+      //     text.includes(word);
+      //   }).length > 0
+      // ) {
+      //   ForbiddenMessage.push(msg);
+      //   // console.log("DM include forbidden word so it'll delete...");
+      //   // await this.deleteMessage(msg);
+      //   await this.sleep(2000);
+      // }
+      ForbiddenWord.map((word) => {
+        if (text.includes(word)) {
+            ForbiddenMessage.push(msg);
+            console.log("DM include forbidden word so it'll delete...");
+            await this.deleteMessage(msg);
+            await this.sleep(2000);
+        }
+      });
     });
     for (const msg of ForbiddenMessage) {
       const idx = triggerMessages.indexOf(msg);
