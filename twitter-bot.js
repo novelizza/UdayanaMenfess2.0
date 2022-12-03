@@ -38,11 +38,11 @@ class TwitterBot {
       const words = this.getEachWord(message); // ['Halo', 'nama', 'gw', 'yoga', 'coy!']
       // return !words.includes(trigger);
 
-      return !trigger.split(" ").map((kataTrigger) => {
-        if (words.includes(kataTrigger)) {
-          return words.includes(kataTrigger);
+      for (let i = 0; i < trigger.split(" ").length; i++) {
+        if (!words.includes(trigger[i])) {
+          return !words.includes(trigger.split(" ")[i]);
         }
-      });
+      }
     });
   };
 
@@ -52,11 +52,11 @@ class TwitterBot {
       const words = this.getEachWord(message); // ['Halo', 'nama', 'gw', 'yoga', 'coy!']
       // return words.includes(trigger);
 
-      return trigger.split(" ").map((kataTrigger) => {
-        if (words.includes(kataTrigger)) {
-          return words.includes(kataTrigger);
+      for (let i = 0; i < trigger.split(" ").length; i++) {
+        if (words.includes(trigger[i])) {
+          return words.includes(trigger.split(" ")[i]);
         }
-      });
+      }
     });
   };
 
@@ -94,9 +94,6 @@ class TwitterBot {
               receivedMessages,
               this.triggerWord
             );
-
-            console.log(unnecessaryMessages, "Tanpa trigger");
-            console.log(triggerMessages, "Trigger");
 
             await this.deleteUnnecessaryMessages(unnecessaryMessages);
             await this.deleteMoreThan280CharMsgs(triggerMessages);
