@@ -95,9 +95,6 @@ class TwitterBot {
               this.triggerWord
             );
 
-            console.log(unnecessaryMessages);
-            console.log(triggerMessages);
-
             await this.deleteUnnecessaryMessages(unnecessaryMessages);
             await this.deleteMoreThan280CharMsgs(triggerMessages);
             await this.deleteDMIncludeForbiddenWord(triggerMessages);
