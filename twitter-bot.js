@@ -36,7 +36,13 @@ class TwitterBot {
     return receivedMessages.filter((msg) => {
       const message = msg.message_create.message_data.text; // 'Halo nama gw yoga coy!'
       const words = this.getEachWord(message); // ['Halo', 'nama', 'gw', 'yoga', 'coy!']
-      return !words.includes(trigger);
+      // return !words.includes(trigger);
+
+      return !trigger.split(" ").map((kataTrigger) => {
+        if (words.includes(kataTrigger)) {
+          return words.includes(kataTrigger);
+        }
+      });
     });
   };
 
@@ -44,7 +50,13 @@ class TwitterBot {
     return receivedMessages.filter((msg) => {
       const message = msg.message_create.message_data.text; // 'Halo nama gw yoga coy!'
       const words = this.getEachWord(message); // ['Halo', 'nama', 'gw', 'yoga', 'coy!']
-      return words.includes(trigger);
+      // return words.includes(trigger);
+
+      return trigger.split(" ").map((kataTrigger) => {
+        if (words.includes(kataTrigger)) {
+          return words.includes(kataTrigger);
+        }
+      });
     });
   };
 
@@ -65,8 +77,14 @@ class TwitterBot {
       this.T.get("direct_messages/events/list", async (error, data) => {
         try {
           if (!error) {
-            // let lastMessage = {};
             const messages = data.events;
+            // this.T.get(
+            //   "followers/ids",
+            //   { screen_name: "need_response" },
+            //   function (err, data, response) {
+            //     console.log(data.ids.length);
+            //   }
+            // );
             const receivedMessages = this.getReceivedMessages(messages, userId);
             const unnecessaryMessages = this.getUnnecessaryMessages(
               receivedMessages,
@@ -77,13 +95,12 @@ class TwitterBot {
               this.triggerWord
             );
 
+            console.log(unnecessaryMessages);
+            console.log(triggerMessages);
+
             await this.deleteUnnecessaryMessages(unnecessaryMessages);
             await this.deleteMoreThan280CharMsgs(triggerMessages);
             await this.deleteDMIncludeForbiddenWord(triggerMessages);
-            // if (triggerMessages[0]) {
-            //   lastMessage = triggerMessages[triggerMessages.length - 1];
-            // }
-            // resolve(lastMessage);
             resolve(triggerMessages);
           } else {
             reject("error on get direct message");
