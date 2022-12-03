@@ -36,13 +36,21 @@ class TwitterBot {
     return receivedMessages.filter((msg) => {
       const message = msg.message_create.message_data.text; // 'Halo nama gw yoga coy!'
       const words = this.getEachWord(message); // ['Halo', 'nama', 'gw', 'yoga', 'coy!']
-      // return !words.includes(trigger);
+      // console.log(!words.includes(trigger));
+      return !words.includes(trigger);
 
-      for (let i = 0; i < trigger.split(" ").length; i++) {
-        if (!words.includes(trigger[i])) {
-          return !words.includes(trigger.split(" ")[i]);
-        }
-      }
+      // const splitTrigger = trigger.split(" ");
+      // console.log(splitTrigger[0]);
+      // console.log(splitTrigger[1]);
+      // console.log(splitTrigger[2]);
+      // console.log(
+      //   !words.includes(splitTrigger[0] || splitTrigger[1] || splitTrigger[2])
+      // );
+      // console.log(!words.includes("kudus!" || "hantukudus!" || "lovekudus!"));
+      // console.log(words);
+      // return !words.includes(
+      //   splitTrigger[0] || splitTrigger[1] || splitTrigger[2]
+      // );
     });
   };
 
@@ -50,13 +58,14 @@ class TwitterBot {
     return receivedMessages.filter((msg) => {
       const message = msg.message_create.message_data.text; // 'Halo nama gw yoga coy!'
       const words = this.getEachWord(message); // ['Halo', 'nama', 'gw', 'yoga', 'coy!']
-      // return words.includes(trigger);
+      // console.log(words.includes(trigger));
+      return words.includes(trigger);
 
-      for (let i = 0; i < trigger.split(" ").length; i++) {
-        if (words.includes(trigger[i])) {
-          return words.includes(trigger.split(" ")[i]);
-        }
-      }
+      // const splitTrigger = trigger.split(" ");
+
+      // return words.includes(
+      //   splitTrigger[0] || splitTrigger[1] || splitTrigger[2]
+      // );
     });
   };
 
@@ -94,6 +103,10 @@ class TwitterBot {
               receivedMessages,
               this.triggerWord
             );
+
+            // console.log(unnecessaryMessages, "No Trigger");
+            // console.log(unnecessaryMessages.length, "No Trigger");
+            // console.log(triggerMessages, "with Trigger");
 
             await this.deleteUnnecessaryMessages(unnecessaryMessages);
             await this.deleteMoreThan280CharMsgs(triggerMessages);
