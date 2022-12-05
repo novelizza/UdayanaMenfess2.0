@@ -37,20 +37,25 @@ class TwitterBot {
       const message = msg.message_create.message_data.text; // 'Halo nama gw yoga coy!'
       const words = this.getEachWord(message); // ['Halo', 'nama', 'gw', 'yoga', 'coy!']
       // console.log(!words.includes(trigger));
-      return !words.includes(trigger);
+      // return !words.includes(trigger);
 
-      // const splitTrigger = trigger.split(" ");
-      // console.log(splitTrigger[0]);
-      // console.log(splitTrigger[1]);
-      // console.log(splitTrigger[2]);
-      // console.log(
-      //   !words.includes(splitTrigger[0] || splitTrigger[1] || splitTrigger[2])
-      // );
-      // console.log(!words.includes("kudus!" || "hantukudus!" || "lovekudus!"));
-      // console.log(words);
-      // return !words.includes(
-      //   splitTrigger[0] || splitTrigger[1] || splitTrigger[2]
-      // );
+      const splitTrigger = trigger.split(" ");
+      let ada = false;
+      let tidakAda = false;
+
+      splitTrigger.map((data) => {
+        if (!words.includes(data)) {
+          ada = true;
+        } else {
+          tidakAda = true;
+        }
+      });
+
+      if (ada && tidakAda) {
+        return false;
+      } else {
+        return true;
+      }
     });
   };
 
@@ -59,13 +64,25 @@ class TwitterBot {
       const message = msg.message_create.message_data.text; // 'Halo nama gw yoga coy!'
       const words = this.getEachWord(message); // ['Halo', 'nama', 'gw', 'yoga', 'coy!']
       // console.log(words.includes(trigger));
-      return words.includes(trigger);
+      // return words.includes(trigger);
 
-      // const splitTrigger = trigger.split(" ");
+      const splitTrigger = trigger.split(" ");
+      let ada = false;
+      let tidakAda = false;
 
-      // return words.includes(
-      //   splitTrigger[0] || splitTrigger[1] || splitTrigger[2]
-      // );
+      splitTrigger.map((data) => {
+        if (words.includes(data)) {
+          tidakAda = true;
+        } else {
+          ada = true;
+        }
+      });
+
+      if (ada && tidakAda) {
+        return true;
+      } else {
+        return false;
+      }
     });
   };
 
@@ -103,10 +120,6 @@ class TwitterBot {
               receivedMessages,
               this.triggerWord
             );
-
-            // console.log(unnecessaryMessages, "No Trigger");
-            // console.log(unnecessaryMessages.length, "No Trigger");
-            // console.log(triggerMessages, "with Trigger");
 
             await this.deleteUnnecessaryMessages(unnecessaryMessages);
             await this.deleteMoreThan280CharMsgs(triggerMessages);
