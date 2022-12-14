@@ -45,9 +45,12 @@ class TwitterBot {
 
       splitTrigger.map((data) => {
         if (!words.includes(data)) {
-          ada = true;
-        } else {
+          console.log(
+            "Tweet with id " + msg.id + " has no trigger, so it'll delete"
+          );
           tidakAda = true;
+        } else {
+          ada = true;
         }
       });
 
@@ -72,9 +75,9 @@ class TwitterBot {
 
       splitTrigger.map((data) => {
         if (words.includes(data)) {
-          tidakAda = true;
-        } else {
           ada = true;
+        } else {
+          tidakAda = true;
         }
       });
 
@@ -172,6 +175,7 @@ class TwitterBot {
       try {
         const text = message.message_create.message_data.text;
         const attachment = message.message_create.message_data.attachment;
+
         const payload = {
           status: text,
         };
