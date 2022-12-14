@@ -45,9 +45,6 @@ class TwitterBot {
 
       splitTrigger.map((data) => {
         if (!words.includes(data)) {
-          console.log(
-            "Tweet with id " + msg.id + " has no trigger, so it'll delete"
-          );
           tidakAda = true;
         } else {
           ada = true;
