@@ -21,7 +21,7 @@ const bot = new TwitterBot({
   triggerWord: process.env.TRIGGER,
 });
 
-const job = new CronJob("0 */3 * * * *", doJob, onComplete, true);
+const job = new CronJob("0 */5 * * * *", doJob, onComplete, true);
 
 async function doJob() {
   console.log(`execute @ ${new Date().toTimeString()}`);
